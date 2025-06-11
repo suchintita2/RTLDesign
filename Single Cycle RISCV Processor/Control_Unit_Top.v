@@ -1,3 +1,7 @@
+`include "ALU_Decoder.v"
+`include "Main_Decoder.v"
+`include "ALU.v"
+
 module Control_Unit_Top(Op, RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, Branch, PCSrc, funct3, funct7, Zero, ALUControl);
     input [6:0] Op, funct7;
     input [2:0] funct3;
