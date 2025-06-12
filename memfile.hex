@@ -9,3 +9,4 @@
 008000ef  // jal  x1, 8            ; jump ahead (should be skipped if branch taken)
 00000013  // NOP
 00b283b3  // add  x7, x5, x11      ; continuation
+6f000000    // j 0 (jump to current PC - infinite loop)
