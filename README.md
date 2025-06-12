@@ -2,7 +2,7 @@
 
 This project involves the design and comparison of three different RISC-V microarchitectures: Single-cycle, Multicycle, and Pipelined.
 
-
+![Single-Cycle Microarchitecture](images/Single-cycle Processor.png)
 Single-Cycle Processor
 
 
