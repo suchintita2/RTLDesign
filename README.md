@@ -2,13 +2,16 @@
 
 This project involves the design and comparison of three different RISC-V microarchitectures: Single-cycle, Multicycle, and Pipelined.
 
+
 ![Single-Cycle Microarchitecture](images/Single-cycle_Processor.png)
 Single-Cycle Processor
 
 
+![Multicycle Microarchitecture](images/Multicycle_Processor.png)
 Multipath Processor
 
 
+![Pipelined Microarchitecture](images/Pipelined_Processor.png)
 Pipelined Processor
 
 The objective is to evaluate the performance, resource usage, and efficiency of each microarchitecture by using the same instruction memory loaded from a memfile.hex.
