@@ -16,5 +16,7 @@ Pipelined Processor
 This project aims to compare the following metrics across the three microarchitectures:
 
   **Execution Time**: Time taken for instruction execution in each microarchitecture.
+  
   **Cycle Count**: Number of cycles taken for completing the execution of a program.
+  
   **Resource Usage**: Estimation of resources used by each architecture (e.g., LUTs, flip-flops).
