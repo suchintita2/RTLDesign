@@ -128,7 +128,7 @@ module Multicycle_Top(
     Mux3to1 resultmux(
         .a(ALUOut),
         .b(Data),
-        .c(OldPC),  // From OldPC as per diagram
+        .c(ALUResult),  
         .s(ResultSrc),
         .y(Result)
     );
