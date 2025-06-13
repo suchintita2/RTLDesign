@@ -50,6 +50,7 @@ module Control_Unit(
                     7'b0110011: next_state = EXECUTE;    // R-type
                     7'b1100011: next_state = BRANCH;     // beq/bne
                     7'b1101111: next_state = JRESET;     // jal
+			7'b0010011: next_state = EXECUTE; //I-type
                     default: next_state = FETCH;
                 endcase
             end
@@ -124,10 +125,13 @@ module Control_Unit(
                 MemWrite = 1;
             end
             EXECUTE: begin
-                ALUSrcA = 1;      // RD1
-                ALUSrcB = 2'b00;  // RD2
-                ALUOp = 2'b10;    // Depends on funct3/funct7
-            end
+    			ALUSrcA = 1; // RD1
+    			if (op == 7'b0010011) // I-type arithmetic
+        		ALUSrcB = 2'b10; // ImmExt
+    			else
+        		ALUSrcB = 2'b00; // RD2 for R-type
+    			ALUOp = 2'b10;
+		end
             ALUWB: begin
                 ResultSrc = 2'b00;  // ALUOut
                 RegWrite = 1;
