@@ -11,8 +11,8 @@ module Sign_Extend (
                 Imm_Ext = {{20{In[31]}}, In[31:25], In[11:7]};
             2'b10: // B-type (e.g., beq)
                 Imm_Ext = {{19{In[31]}}, In[31], In[7], In[30:25], In[11:8], 1'b0};
-            default:
-                Imm_Ext = 32'b0;
+		2'b11: // J-type (e.g., jal)
+                Imm_Ext = {{11{In[31]}}, In[31], In[19:12], In[20], In[30:21], 1'b0};	
         endcase
     end
 endmodule
