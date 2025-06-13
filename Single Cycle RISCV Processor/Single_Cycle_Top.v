@@ -9,12 +9,10 @@
 `include "Mux.v"
 `include "Mux3to1.v"
 
-module Single_Cycle_Top(clk, rst);
-    input clk, rst;
-
+module Single_Cycle_Top(input clk, rst);
     wire [31:0] PC_Top, RD_Instr, RD1_Top, Imm_Ext_Top, ALUResult, ReadData;
     wire [31:0] PCPlus4, RD2_Top, SrcB, Result, PCTarget, PC_Next;
-    wire RegWrite, MemWrite, ALUSrc, PCSrc, Zero;
+    wire RegWrite, MemWrite, ALUSrc, PCSrc, Zero, Branch;
     wire [1:0] ImmSrc, ResultSrc;
     wire [2:0] ALUControl_Top;
 
@@ -97,7 +95,6 @@ module Single_Cycle_Top(clk, rst);
         .RD(ReadData)
     );
 
-    // --- 3-to-1 mux for Result ---
     Mux3to1 Result_Mux(
         .a(ALUResult),
         .b(ReadData),
