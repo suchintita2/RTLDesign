@@ -119,9 +119,10 @@ module Pipelined_Processor_Top(input wire clk, rst);
   );
 
   // Writeback result mux
-  Mux4to1 result_mux(
-    .sel(ResultSrcW), .in0(ALUResultM), .in1(ReadDataW), .in2(PCPlus4W), .in3(32'b0),
-    .out(ResultW)
-  );
+  Mux3to1 result_mux(
+  .sel(ResultSrcW), .in0(ALUResultM), .in1(ReadDataW), .in2(PCPlus4W),
+  .out(ResultW)
+);
+
 
 endmodule
