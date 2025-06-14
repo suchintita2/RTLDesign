@@ -1,33 +1,13 @@
-module RegisterFile (
-    input clk,
-    input reset,
-    input RegWrite,            // Write enable
-    input [4:0] ReadReg1,      // Read register 1
-    input [4:0] ReadReg2,      // Read register 2
-    input [4:0] WriteReg,      // Write register
-    input [31:0] WriteData,    // Write data
-    output [31:0] ReadData1,   // Read data 1
-    output [31:0] ReadData2    // Read data 2
+module Register_File(
+  input wire clk,
+  input wire [4:0] A1, A2, A3,
+  input wire [31:0] WD3,
+  input wire WE3,
+  output wire [31:0] RD1, RD2
 );
-
-    reg [31:0] registers [0:31]; // 32 registers x 32 bits
-
-    // Initialize registers to 0 on reset
-    integer i;
-    always @(posedge reset) begin
-        if (reset) begin
-            for (i = 0; i < 32; i = i + 1)
-                registers[i] <= 32'b0;
-        end
-    end
-
-    // Read operations (asynchronous)
-    assign ReadData1 = registers[ReadReg1];
-    assign ReadData2 = registers[ReadReg2];
-
-    // Write operation (synchronous)
-    always @(posedge clk) begin
-        if (RegWrite && WriteReg != 0) // Register 0 is always 0
-            registers[WriteReg] <= WriteData;
-    end
+  reg [31:0] rf[31:0];
+  assign RD1 = rf[A1];
+  assign RD2 = rf[A2];
+  always @(posedge clk)
+    if (WE3) rf[A3] <= WD3;
 endmodule
