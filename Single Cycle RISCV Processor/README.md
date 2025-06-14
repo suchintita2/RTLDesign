@@ -5,7 +5,7 @@
 Implements a basic 32-bit single-cycle RISC-V core where each instruction completes in a single clock cycle.
 
 ### Key Features:
-- Supports R, I, S, B, U, J formats (basic ALU, load/store, branches)
+- Supports R, I, S, B, J formats (basic ALU, load/store, branches, U-type not yet implemented)
 - All units (ALU, control, registers, memory) used combinationally
 - Simple control logic, easy to verify
 
