@@ -1,14 +1,9 @@
-module InstructionMemory (
-    input [31:0] Address,
-    output [31:0] Instruction
-);
+module Instruction_Memory(input wire rst, input wire [31:0] A, output wire [31:0] RD);  // PC is byte-addressed; instr mem is word-addressed (4-byte aligned)
+  reg [31:0] mem [0:255];
 
-    reg [31:0] mem [0:1023]; // 1KB memory
+  initial begin
+    $readmemh("memfile.hex", mem);
+  end
 
-    // Initialize with some sample instructions
-    initial begin
-        $readmemh("memfile.hex", mem);
-end
-
-    assign Instruction = mem[Address[11:2]]; // Word-aligned access
+  assign RD = mem[A[9:2]];
 endmodule
