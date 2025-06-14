@@ -27,7 +27,8 @@ Implements a basic 32-bit single-cycle RISC-V core where each instruction comple
 
 ## 🖼️ Architecture Diagram
 
-*(Optional: Add or link your block diagram image)*
+![Single-Cycle Microarchitecture](images/Single-cycle_Processor.png)
+Single-Cycle Processor
 
 ## 📌 Notes
 
