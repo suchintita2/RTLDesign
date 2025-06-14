@@ -1,22 +1,18 @@
-module ALU (
-    input [31:0] SrcA,
-    input [31:0] SrcB,
-    input [3:0] ALUControl,
-    output Zero,
-    output reg [31:0] ALUResult
+module ALU(
+  input wire [31:0] A, B,
+  input wire [2:0] ALUControl,
+  output reg [31:0] Result,
+  output Zero
 );
-
-    always @(*) begin
-        case (ALUControl)
-            4'b0000: ALUResult = SrcA & SrcB;  // AND
-            4'b0001: ALUResult = SrcA | SrcB;  // OR
-            4'b0010: ALUResult = SrcA + SrcB;  // ADD
-            4'b0110: ALUResult = SrcA - SrcB;  // SUB
-            4'b0111: ALUResult = (SrcA < SrcB) ? 32'b1 : 32'b0; // SLT
-            4'b1100: ALUResult = ~(SrcA | SrcB); // NOR
-            default: ALUResult = 32'b0;
-        endcase
-    end
-
-    assign Zero = (ALUResult == 32'b0);
+  always @(*) begin
+    case (ALUControl)
+      3'b000: Result = A + B;
+      3'b001: Result = A - B;
+      3'b010: Result = A & B;
+      3'b011: Result = A | B;
+      3'b100: Result = A ^ B;
+      default: Result = 0;
+    endcase
+  end
+  assign Zero = (Result == 0);
 endmodule
