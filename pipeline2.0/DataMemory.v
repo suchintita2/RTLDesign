@@ -1,19 +1,24 @@
-module DataMemory (
-    input clk,
-    input MemWrite,
-    input [31:0] Address,
-    input [31:0] WriteData,
-    output [31:0] ReadData
+module Data_Memory(
+  input wire clk, WE,
+  input wire [31:0] A, WD,
+  output wire [31:0] RD
 );
+  reg [31:0] RAM [0:255];
 
-    reg [31:0] mem [0:1023]; // 1KB memory
+  initial begin
+    integer i;
+    for (i = 0; i < 256; i = i + 1)
+      RAM[i] = 0;
+  end
 
-    // Read operation (asynchronous)
-    assign ReadData = mem[Address[11:2]]; // Word-aligned access
+  always @(posedge clk)
+    if (WE) RAM[A[9:2]] <= WD;
 
-    // Write operation (synchronous)
-    always @(posedge clk) begin
-        if (MemWrite)
-            mem[Address[11:2]] <= WriteData;
-    end
+  assign RD = RAM[A[9:2]];
+
+  // Debug output for memory writes
+  always @(posedge clk) begin
+    if (WE)
+      $display("[Cycle %0t] Memory[%h] <= %h", $time, A, WD);
+  end
 endmodule
