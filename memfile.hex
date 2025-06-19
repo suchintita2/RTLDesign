@@ -13,8 +13,5 @@
 020002b7  //30: lui x5, 0x20000        ; U-type: x5 = 0x20000000
 00110113  //34: addi x2, x2, 1         ; x2 += 1
 00c120e7  //38: jalr x1, 12(x2)        ; JALR to x2+12, store PC+4 to x1
-00000013  //3C: NOP                    ; in delay slot
 00a10223  //40: sw x10, 0(x2)          ; misaligned store: x2 = 9 → cause warning
-00000013  //44: NOP
-00000013  //48: NOP
 6f000000  //4C: j 0                    ; infinite loop
