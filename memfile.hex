@@ -7,7 +7,6 @@
 00512023  //18: sw x5, 0(x2)           ; x[2] is address, store x5 (S)
 00428263  //1C: beq x5, x4, +8         ; control hazard (B)
 008000ef  //20: jal x1, +8             ; jump over next to 0x2C (J)
-00000013  //24: NOP                    ; skipped if jal works
 00b283b3  //28: add x7, x5, x11        ; dummy (data dep)
 00100093  //2C: addi x1, x0, 1         ; x1 = 1
 020002b7  //30: lui x5, 0x20000        ; U-type: x5 = 0x20000000
