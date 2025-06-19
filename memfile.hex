@@ -1,16 +1,15 @@
-00000013  // 0: NOP
-00500113  // 4: addi x2, x0, 5         ; x2 = 5 (I)
-00208233  // 8: add x4, x1, x2         ; x4 = x1 + x2 (R)
-00410113  // C: addi x2, x2, 4         ; x2 = x2 + 4 (I)
-00022103  //10: lw x2, 0(x4)           ; load-use hazard
-002102b3  //14: add x5, x2, x2         ; x5 = x2 + x2 (data hazard)
-00512023  //18: sw x5, 0(x2)           ; x[2] is address, store x5 (S)
-00428263  //1C: beq x5, x4, +8         ; control hazard (B)
-008000ef  //20: jal x1, +8             ; jump over next to 0x2C (J)
-00b283b3  //28: add x7, x5, x11        ; dummy (data dep)
-00100093  //2C: addi x1, x0, 1         ; x1 = 1
-020002b7  //30: lui x5, 0x20000        ; U-type: x5 = 0x20000000
-00110113  //34: addi x2, x2, 1         ; x2 += 1
-00c120e7  //38: jalr x1, 12(x2)        ; JALR to x2+12, store PC+4 to x1
-00a10223  //40: sw x10, 0(x2)          ; misaligned store: x2 = 9 → cause warning
-6f000000  //4C: j 0                    ; infinite loop
+00000013  // NOP
+00500113  // addi x2, x0, 5
+002082b3  // add  x5, x1, x2      ; R-type
+00410113  // addi x2, x2, 4       ; I-type
+0002a103  // lw   x2, 0(x5)       ; Load word -> load-use hazard follows
+002101b3  // add  x3, x2, x2      ; R-type (load-use hazard)
+00312023  // sw   x3, 0(x2)       ; Proper store
+00512023  // sw   x5, 0(x2)       ; Another store
+00512223  // sw   x5, 2(x2)       ; ⚠️ Misaligned store (Addr = x2 + 2)
+000002b7  // lui  x5, 0x2         ; U-type instruction
+000280e7  // jalr x1, 0(x5)       ; JALR (control hazard)
+00528263  // beq  x5, x2, skip    ; B-type, if x5 == x2 → skip
+004000ef  // jal  x1, 4           ; J-type (jump to PC+4)
+00b283b3  // add  x7, x5, x11     ; normal R-type
+6f000000  // j     0              ; Infinite loop
