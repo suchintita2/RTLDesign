@@ -1,4 +1,4 @@
-`include mux8.v;
+`include "mux8.v"
 
 module APB_Slave_Interface(
   input PClk, PRESENTn, PWRITE, PSEL, PENABLE, SS, receive_data, tip,
