@@ -1,4 +1,4 @@
-module f_low(input s1, sclk, s2, PCLK, PRESETn, output y);
+module f_low(input s1, sclk, s2, PCLK, PRESETn, output reg y);
 
   wire a,b,c;
   reg d;
