@@ -1,4 +1,4 @@
-module f_high(input s1, sclk, s2, PCLK, PRESETn, output y);
+module f_high(input s1, sclk, s2, PClK, PRESETn, output reg y);
 
   wire a,b,c;
   reg d;
