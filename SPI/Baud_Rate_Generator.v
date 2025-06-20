@@ -1,4 +1,5 @@
 `include "f_low"
+`include "f_high"
 
 module Baud_Rate_Generator(
   input PClk, PRESETn, spiswwai, cpol, cpha, SS,
@@ -30,17 +31,9 @@ module Baud_Rate_Generator(
 
   assign select2 = ((cpha & (~cpol)) | ((~cpha) & cpol));
 
-  
-module (input s1, sclk, s2, PCLK, PRESETn, output y);
-
-  wire a,b,c;
-  reg d;
-
-  assign a = s1? 1'b1 : 1'b0;
-  assign b = sclk? 1'b0 : a;
-  assign c = s2? y : b;
-  always@(posedge PClk)
-    d<=c;
-  assign y = PRESETn? d:1'b0;
+  f_low f1(.s1(count == (baud_rate_divisor - 1'b1)), .sclk(sclk), .s2(select2), .PClk(PClk), .PRESETn(PRESETn), .y(flag_low));
+  f_low f2(.s1(count == (baud_rate_divisor - 2'b10)), .sclk(sclk), .s2(select2), .PClk(PClk), .PRESETn(PRESETn), .y(flags_low));
+  f_high f3(.s1(count == (baud_rate_divisor - 1'b1)), .sclk(sclk), .s2(select2), .PClk(PClk), .PRESETn(PRESETn), .y(flag_high));
+  f_high f4(.s1(count == (baud_rate_divisor - 2'b10)), .sclk(sclk), .s2(select2), .PClk(PClk), .PRESETn(PRESETn), .y(flags_high));
 
 endmodule
