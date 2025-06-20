@@ -1,3 +1,11 @@
+module APB_Slave_Interface(
+  input PClk, PRESENTn, PWRITE, PSEL, PENABLE, SS, receive_data, tip,
+  input [2:0] PADDR,
+  input [7:0] PWDATA, miso_data,
+  output mstr, cpol, cpha, lsbfe, spiswai, spi_interrupt_request, PREADY, PSLVERR, send_data, mosi_data, spi_mode,
+  output [2:0] sppr, spr, 
+  output [7:0] PRDATA);
+  
 reg [7:0] SPI_CR1, SPI_CR2, SPI_SR, SPI_DR;
 
 wire sptef, spif, spe, modfen, modf, ssoe, wr_enb, rd_enb, spie, sptie;
@@ -14,20 +22,23 @@ parameter IDLE = 2'600;
 parameter SETUP 2'601; // Setup state
 parameter ENABLE 2'b10; // Enable state
 
-assign ssoe = SPI_CR1[1];
-assign mstr = SPI_CR1[4];
-assign spe SPI_CR1[6];
-assign spie = SPI_CR1[7];
-assign sptie= SPI_CR1[5];
-assign cpol = SPI_CR1[3];
-assign cpha= SPI_CR1[2];
-assign lsbfe = SPI_CR1[0];
-assign modfen = SPI_CR2[4];
-assign spiswai = SPI_CR2[1]; //to
-assign sppr= SPI_BR[6:4];
-assign spr = SPI_BR[2:0];
+  assign ssoe = SPI_CR1[1];
+  assign mstr = SPI_CR1[4];
+  assign spe SPI_CR1[6];
+  assign spie = SPI_CR1[7];
+  assign sptie= SPI_CR1[5];
+  assign cpol = SPI_CR1[3];
+  assign cpha= SPI_CR1[2];
+  assign lsbfe = SPI_CR1[0];
+  assign modfen = SPI_CR2[4];
+  assign spiswai = SPI_CR2[1]; //to
+  assign sppr= SPI_BR[6:4];
+  assign spr = SPI_BR[2:0];
 
-assign wr_enb PWRITE && (STATE ENABLE);
-assign rd_enb !PWRITE && (STATE ENABLE);
-assign PREADY (STATE ENABLE)?1'b1:1'b0;
-assign PSLVERR (STATE= ENABLE)?tip:1'b0;
+  assign wr_enb = PWRITE && (STATE ENABLE);
+  assign rd_enb = !PWRITE && (STATE ENABLE);
+  assign PREADY = (STATE == ENABLE)? 1'b1 : 1'b0;
+  assign PSLVERR = (STATE == ENABLE)? tip : 1'b0;
+  assign sptef = (SPI_DR == 8'b0)? 1'b1: 1'b0;
+  assign spif = (SPI_DR != 8'b0)? 1'b1: 1'b0;
+  assign modf = (~SS) & mstr & modfen & (~ssoe);
