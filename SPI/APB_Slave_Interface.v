@@ -1,3 +1,5 @@
+`include mux8.v;
+
 module APB_Slave_Interface(
   input PClk, PRESENTn, PWRITE, PSEL, PENABLE, SS, receive_data, tip,
   input [2:0] PADDR,
