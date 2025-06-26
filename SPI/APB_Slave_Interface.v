@@ -1,4 +1,3 @@
-`include "mux8.v"
 
 module APB_Slave_Interface(
   input PClk, PRESENTn, PWRITE, PSEL, PENABLE, SS, receive_data, tip,
@@ -171,4 +170,13 @@ always @(*) begin
     endcase
 end
   
+endmodule
+
+
+module mux8(
+  input [7:0] a,b, 
+  input s, 
+  output [7:0] y);
+
+  assign y = s?b:a;
 endmodule
