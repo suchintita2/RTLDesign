@@ -1,5 +1,3 @@
-`include "f_low"
-
 module Baud_Rate_Generator(
   input PClk, PRESETn, spiswwai, cpol, cpha, SS,
   input [1:0] spi_mode,
@@ -45,6 +43,20 @@ module f_high(input s1, sclk, s2, PClK, PRESETn, output reg y);
   assign a = s1? 1'b1 : 1'b0;
   assign b = sclk? a : 1'b0;
   assign c = s2? b : y;
+  always@(posedge PClk)
+    d<=c;
+  assign y = PRESETn? d:1'b0;
+
+endmodule
+
+module f_low(input s1, sclk, s2, PCLK, PRESETn, output reg y);
+
+  wire a,b,c;
+  reg d;
+
+  assign a = s1? 1'b1 : 1'b0;
+  assign b = sclk? 1'b0 : a;
+  assign c = s2? y : b;
   always@(posedge PClk)
     d<=c;
   assign y = PRESETn? d:1'b0;
