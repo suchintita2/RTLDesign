@@ -6,9 +6,10 @@ module spi_slave_control_select(
   output reg receive_data);
 
   reg rcv;
-  wire select, enable;
+  wire select, enable, target;
 
   assign tip = ~ss;
+  assign target = baud_rate_divisor << 4;
   
   assign select = ((!spiswai) && enable && mstr);
   assign enable = (spi_mode == 2'b00) || (spi_mode == 2'b01);
