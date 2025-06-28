@@ -91,6 +91,19 @@ module APB_Slave_Interface(
     end 
   end
 
+  assign spi_interrupt_request = ( !spie && !sptie )?0:
+                   ( spie && !sptie )? (spif || modf ):
+                 ( !spie && sptie )? sptef :
+                 (spif || sptef || modf );
+
+  always@(posedge PCLK or negedge PRESETn) begin
+    if(!PRESETn)
+	    mosi_data <= 0;
+    else if (((SPI_DR == PWDATA) && SPI_DR != miso_data) && (spi_mode  spi_run || spi_mode  spi_wait) && ~wr_enb) begin
+      mosi_data <= SPI_DR;
+ 	  end 
+  end
+
   always @(posedge PClk) begin
       if (!PRESETn) begin  
           STATE <= IDLE;
