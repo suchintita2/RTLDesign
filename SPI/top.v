@@ -3,9 +3,10 @@ module top(
   input [2:0] PADDR,
   input[7:0] PWDATA,
   output [7:0] PRDATA,
-  output ss, sclk, spi_interrupt_request, mosi, PREADY, PSLVERR
+  output PREADY, PSLVERR, sclk, ss, mosi, spi_interrupt_request
 );
 
+	
   wire tip;
   wire [1:0] spi_mode;
   wire spiswai,cpol,cpha,flag_high,flag_low,flags_high,flags_low,send_data,lsbfe,receive_data,mstr;
