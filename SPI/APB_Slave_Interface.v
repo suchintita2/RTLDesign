@@ -102,7 +102,7 @@ module APB_Slave_Interface(
 		end 
 	end
 	
-	always @(posedge PClk) begin
+	always @(posedge PCLK) begin
       		if (!PRESETn)   
 	          	STATE <= IDLE;
 	      	else begin
@@ -138,7 +138,7 @@ module APB_Slave_Interface(
 	  end
 	  
 	  // Sequential update of spi_mode
-	  always @(posedge PClk) begin
+	always @(posedge PCLK) begin
 	      if (!PRESETn) begin  
 	          spi_mode <= spi_run;
 	      end else begin
