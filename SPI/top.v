@@ -14,7 +14,7 @@ module top(
   wire [7:0] data_mosi,data_miso;
   wire [2:0] spr,sppr;
   
-  Baud_Rate_Generator BAUD_GEN (PCLK, PRESETn, spiswwai, cpol, cpha, ss, spi_mode, sppr, spr, 
+  Baud_Rate_Generator BAUD_GEN (PCLK, PRESETn, spiswai, cpol, cpha, ss, spi_mode, sppr, spr, 
                                 sclk, flag_low, flags_low, flag_high, flags_high, baud_rate_div);
 
 	APB_Slave_Interface SLAVE_INTERFACE (PCLK, PRESETn, PWRITE, PSEL, PENABLE, ss, receive_data, tip,
