@@ -1,6 +1,6 @@
 
 module APB_Slave_Interface(
-	input PCLK, PRESENTn, PWRITE, PSEL, PENABLE, ss, receive_data, tip,
+	input PCLK, PRESETn, PWRITE, PSEL, PENABLE, ss, receive_data, tip,
   	input [2:0] PADDR,
   	input [7:0] PWDATA, miso_data,
 	
