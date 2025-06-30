@@ -15,7 +15,7 @@ module Baud_Rate_Generator(
   assign select = ((~ss) && (~spiswai) && (spi_mode == 2'b00 || spi_mode == 2'b01));
   assign sel = (cpha ^ cpol);
 
-  always@(posedge PCLK or nedgedge PRESETn) begin
+  always@(posedge PCLK or negedge PRESETn) begin
     if(!PRESETn) begin
       sclk <= pre_sclk;
       count <= 12'b0;
@@ -34,7 +34,7 @@ module Baud_Rate_Generator(
     end
   end
 
-  always@(posedge PCLK or nedgedge PRESETn) begin
+  always@(posedge PCLK or negedge PRESETn) begin
     if(!PRESETn) begin
       flag_low <= 1'b0;
       flags_low <= 1'b0;
