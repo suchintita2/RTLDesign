@@ -21,7 +21,7 @@ module top(
 					     PADDR, PWDATA, data_miso, mstr, cpol, cpha, lsbfe, spiswai, spi_interrupt_request, 
 					     PREADY, PSLVERR, send_data, data_mosi, spi_mode, sppr, spr, PRDATA);
 	
-  spi_slave_control_select SLAVE_SELECT (PCLK, PRESETn, mstr, spiswai, send_data, spi_mode, , baud_rate_div, ss, tip, receive_data);
+  spi_slave_control_select SLAVE_SELECT (PCLK, PRESETn, mstr, spiswai, send_data, spi_mode, baud_rate_div, ss, tip, receive_data);
 
   shift_register SHIFT_REG (PCLK, PRESETn, ss, send_data, lsbfe, cpha, cpol, flag_low, flag_high, 
                             flags_low, flags_high, miso, receive_data, data_mosi, data_miso, mosi);
