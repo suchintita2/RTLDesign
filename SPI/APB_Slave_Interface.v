@@ -65,10 +65,6 @@ module APB_Slave_Interface(
 	        		SPI_CR2 <= (PWDATA && cr2_mask);
 	      		else if(PADDR == 3'b010)
 	       			 SPI_BR <= (PWDATA && br_mask);
-	    	end else if (!wr_enb) begin
-	      		SPI_CR1 <= 8'h00;
-	      		SPI_CR2 <= 8'h04;
-	      		SPI_BR <= 8'h00;
 	    	end
 	  end
 	
