@@ -3,7 +3,8 @@ module shift_register (
     input flag_high, flags_high, flag_low, flags_low,
     input miso, receive_data,
     input [7:0] data_mosi,
-    output [7:0] data_miso,     output reg [7:0] rx_shift_reg_out
+    output [7:0] data_miso,
+    output reg [7:0] rx_shift_reg_out
     output reg mosi
 );
 
