@@ -1,58 +1,53 @@
-// ====================================================
-// SPI Shift Register (clean, robust, new implementation)
-// Author: 22BEC0413
-// ====================================================
-
-module shift_register(
-    input        PCLK, PRESETn, ss, send_data, lsbfe, cpha, cpol,
-    input        flag_high, flags_high, miso, receive_data,
-    input  [7:0] data_mosi,
-    output [7:0] data_miso,
-    output reg   mosi
+module shift_register (
+    input PCLK, PRESETn, ss, send_data, lsbfe, cpha, cpol,
+    input flag_high, flags_high, flag_low, flags_low,
+    input miso, receive_data,
+    input [7:0] data_mosi,
+    output [7:0] data_miso,     output reg [7:0] rx_shift_reg_out
+    output reg mosi
 );
 
-    // Internal registers
     reg [7:0] tx_shift_reg;
     reg [7:0] rx_shift_reg;
-    reg [2:0] tx_bit_idx;
-    reg [2:0] rx_bit_idx;
 
     assign data_miso = rx_shift_reg;
 
-    // Transmission logic (MOSI)
+
+    wire shift_flag = (cpha ^ cpol) ? flags_high : flags_low;
+    wire sample_flag = (cpha ^ cpol) ? flag_high : flag_low;
+
     always @(posedge PCLK or negedge PRESETn) begin
         if (!PRESETn) begin
             tx_shift_reg <= 8'b0;
-            tx_bit_idx   <= 3'd7;
-            mosi         <= 1'b0;
+            mosi <= 1'b0;
         end else if (send_data) begin
             tx_shift_reg <= data_mosi;
-            tx_bit_idx   <= lsbfe ? 3'd0 : 3'd7;
-        end else if (!ss && flags_high) begin
+            mosi <= lsbfe ? data_mosi[0] : data_mosi[7];
+        end else if (!ss && shift_flag) begin
             if (lsbfe) begin
-                mosi <= tx_shift_reg[tx_bit_idx];
-                tx_bit_idx <= (tx_bit_idx == 3'd7) ? 3'd0 : tx_bit_idx + 1'b1;
+                mosi <= tx_shift_reg[0];
+                tx_shift_reg <= {1'b0, tx_shift_reg[7:1]};
             end else begin
-                mosi <= tx_shift_reg[tx_bit_idx];
-                tx_bit_idx <= (tx_bit_idx == 3'd0) ? 3'd7 : tx_bit_idx - 1'b1;
+                mosi <= tx_shift_reg[7];
+                tx_shift_reg <= {tx_shift_reg[6:0], 1'b0};
             end
         end
     end
 
-    // Reception logic (MISO)
     always @(posedge PCLK or negedge PRESETn) begin
         if (!PRESETn) begin
             rx_shift_reg <= 8'b0;
-            rx_bit_idx   <= 3'd7;
-        end else if (!ss && flag_high) begin
+            rx_shift_reg_out <= 8'b0; 
+        end else if (send_data) begin
+            rx_shift_reg <= 8'b0;
+            rx_shift_reg_out <= 8'b0;
+        end else if (!ss && sample_flag) begin
             if (lsbfe) begin
-                rx_shift_reg[rx_bit_idx] <= miso;
-                rx_bit_idx <= (rx_bit_idx == 3'd7) ? 3'd0 : rx_bit_idx + 1'b1;
+                rx_shift_reg <= {miso, rx_shift_reg[7:1]};
             end else begin
-                rx_shift_reg[rx_bit_idx] <= miso;
-                rx_bit_idx <= (rx_bit_idx == 3'd0) ? 3'd7 : rx_bit_idx - 1'b1;
+                rx_shift_reg <= {rx_shift_reg[6:0], miso};
             end
-        end
+            rx_shift_reg_out <= rx_shift_reg;         end
     end
 
 endmodule
