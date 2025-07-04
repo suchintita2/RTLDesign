@@ -11,9 +11,19 @@ module Pipeline_top(
     
     // SPI interface
     output sclk, ss, mosi, spi_interrupt,
-    input miso
+    input miso,
+    
+    // NEW: Debug interface
+    input [31:0] debug_addr,
+    input debug_read, debug_write,
+    input [31:0] debug_write_data,
+    output [31:0] debug_read_data,
+    
+    // NEW: Status outputs
+    output spi_transaction,
+    output mem_error
 );
-
+    // Internal signals
     wire PCSrcE, RegWriteE, ALUSrcE, MemWriteE, BranchE, JumpE;
     wire RegWriteM, MemWriteM;
     wire [1:0] ResultSrcE, ResultSrcM;
@@ -27,6 +37,11 @@ module Pipeline_top(
     wire StallF, StallD, FlushD, FlushE;
     wire [31:0] PCTargetE;
     wire ZeroE;
+
+    // NEW: Performance monitoring signals
+    wire instruction_executed = RegWriteW;  // Simplified
+    wire pipeline_stall = StallF || StallD;
+    wire branch_taken = PCSrcE;
 
     fetch_cycle Fetch (
         .clk(clk),
@@ -121,8 +136,20 @@ module Pipeline_top(
         .ss(ss),
         .mosi(mosi),
         .spi_interrupt(spi_interrupt),
-        .miso(miso)
+        .miso(miso),
+        // NEW connections
+        .debug_addr(debug_addr),
+        .debug_read(debug_read),
+        .debug_write(debug_write),
+        .debug_write_data(debug_write_data),
+        .debug_read_data(debug_read_data),
+        .instruction_executed(instruction_executed),
+        .pipeline_stall(pipeline_stall),
+        .branch_taken(branch_taken),
+        .spi_transaction(spi_transaction),
+        .mem_error(mem_error)
     );
+
 
     writeback_cycle WriteBack (
         .clk(clk),
