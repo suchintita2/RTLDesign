@@ -10,7 +10,20 @@ module memory_cycle(
     
     // SPI interface
     output sclk, ss, mosi, spi_interrupt,
-    input miso
+    input miso,
+    
+    // NEW: Debug interface
+    input [31:0] debug_addr,
+    input debug_read, debug_write,
+    input [31:0] debug_write_data,
+    output [31:0] debug_read_data,
+    
+    // NEW: Performance monitoring
+    input instruction_executed,
+    input pipeline_stall,
+    input branch_taken,
+    output spi_transaction,
+    output mem_error
 );
     wire [31:0] ReadDataM;
     wire mem_ready;
@@ -19,7 +32,7 @@ module memory_cycle(
     reg [4:0] RD_M_r;
     reg [31:0] PCPlus4M_r, ALU_ResultM_r, ReadDataM_r;
 
-    // Enhanced Data Memory with SPI
+    // Enhanced Data Memory with all new features
     Enhanced_Data_Memory dmem (
         .clk(clk),
         .rst(rst),
@@ -28,13 +41,27 @@ module memory_cycle(
         .A(ALU_ResultM),
         .RD(ReadDataM),
         .mem_ready(mem_ready),
+        .mem_error(mem_error),           // NEW
         .sclk(sclk),
         .ss(ss),
         .mosi(mosi),
         .spi_interrupt(spi_interrupt),
-        .miso(miso)
+        .miso(miso),
+        // NEW debug interface
+        .debug_addr(debug_addr),
+        .debug_read(debug_read),
+        .debug_write(debug_write),
+        .debug_write_data(debug_write_data),
+        .debug_read_data(debug_read_data),
+        // NEW performance monitoring
+        .instruction_executed(instruction_executed),
+        .pipeline_stall(pipeline_stall),
+        .branch_taken(branch_taken),
+        .spi_transaction(spi_transaction),
+        .pipeline_error()
     );
 
+    // Rest of the module remains the same...
     // Pipeline register updates with mem_ready control
     always @(posedge clk or negedge rst) begin
         if (!rst) begin
