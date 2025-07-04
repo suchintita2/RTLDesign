@@ -3,21 +3,26 @@ module Enhanced_Data_Memory(
     input [31:0] A, WD,
     output [31:0] RD,
     output mem_ready,
-    output mem_error,
+    output mem_error,        // NEW
     
     // SPI interface
     output sclk, ss, mosi, spi_interrupt,
     input miso,
     
-    // Debug interface
+    // Debug interface - NEW
     input [31:0] debug_addr,
     input debug_read, debug_write,
     input [31:0] debug_write_data,
     output [31:0] debug_read_data,
     
-    // Performance monitoring
+    // Performance monitoring - NEW
     output spi_transaction,
-    output pipeline_error
+    output pipeline_error,
+    
+    // Pipeline monitoring inputs - NEW
+    input instruction_executed,
+    input pipeline_stall,
+    input branch_taken
 );
     
     // Regular memory
@@ -35,12 +40,12 @@ module Enhanced_Data_Memory(
     wire [2:0] spi_paddr;
     wire [7:0] spi_pwdata;
     
-    // Debug signals
+    // Debug signals - NEW
     wire debug_select;
     wire perf_select;
     wire [31:0] debug_data, perf_data;
     
-    // Address decode
+    // Address decode - ENHANCED
     parameter SPI_BASE = 32'h1000_0000;
     parameter SPI_END  = 32'h1000_0020;
     parameter DBG_BASE = 32'h2000_0000;
@@ -53,11 +58,11 @@ module Enhanced_Data_Memory(
     assign perf_select = (A >= PERF_BASE) && (A < PERF_END);
     assign mem_access = !spi_select && !debug_select && !perf_select;
     
-    // Memory bounds checking
+    // Memory bounds checking - NEW
     wire mem_bounds_ok = (A[31:2] < 1024) && mem_access;
     assign pipeline_error = mem_access && !mem_bounds_ok;
     
-    // Regular memory access with bounds checking
+    // Regular memory access with bounds checking - ENHANCED
     always @(posedge clk) begin
         if (WE && mem_bounds_ok && rst) begin
             mem[A[31:2]] <= WD;
@@ -67,7 +72,7 @@ module Enhanced_Data_Memory(
     assign mem_rd = (!rst) ? 32'd0 : 
                    mem_bounds_ok ? mem[A[31:2]] : 32'hDEADBEEF;
     
-    // APB Bridge instance
+    // Enhanced APB Bridge instance - CHANGED
     Enhanced_APB_Bridge apb_bridge(
         .clk(clk),
         .rst(rst),
@@ -77,7 +82,7 @@ module Enhanced_Data_Memory(
         .mem_write_data(WD),
         .mem_read_data(spi_read_data),
         .mem_ready(spi_ready),
-        .mem_error(spi_error),
+        .mem_error(spi_error),           // NEW
         .PCLK(),
         .PRESETn(),
         .PWRITE(spi_pwrite),
@@ -90,7 +95,7 @@ module Enhanced_Data_Memory(
         .PSLVERR(spi_pslverr)
     );
     
-    // SPI IP Core instance
+    // SPI IP Core instance - UNCHANGED
     spi_top spi_master(
         .PCLK(clk),
         .PRESETn(rst),
@@ -109,13 +114,13 @@ module Enhanced_Data_Memory(
         .spi_interrupt_request(spi_interrupt)
     );
     
-    // Performance Counter
+    // Performance Counter - NEW
     performance_counter perf_counter(
         .clk(clk),
         .rst(rst),
-        .instruction_executed(1'b1), // Connect to actual signal
-        .pipeline_stall(1'b0),       // Connect to actual signal
-        .branch_taken(1'b0),         // Connect to actual signal
+        .instruction_executed(instruction_executed),
+        .pipeline_stall(pipeline_stall),
+        .branch_taken(branch_taken),
         .spi_transaction(spi_psel && spi_penable && spi_pready),
         .debug_addr(A),
         .debug_read(!WE && perf_select),
@@ -127,7 +132,7 @@ module Enhanced_Data_Memory(
         .spi_transaction_count()
     );
     
-    // Debug Registers
+    // Debug Registers - NEW
     debug_registers debug_regs(
         .clk(clk),
         .rst(rst),
@@ -145,7 +150,7 @@ module Enhanced_Data_Memory(
         .pipeline_error(pipeline_error)
     );
     
-    // Output multiplexing
+    // Output multiplexing - ENHANCED
     assign RD = spi_select ? spi_read_data : 
                debug_select ? debug_data :
                perf_select ? perf_data : 
@@ -155,7 +160,7 @@ module Enhanced_Data_Memory(
     assign mem_error = spi_select ? spi_error : pipeline_error;
     assign spi_transaction = spi_psel && spi_penable && spi_pready;
     
-    // Initialize memory
+    // Initialize memory - UNCHANGED
     integer i;
     initial begin
         for (i = 0; i < 1024; i = i + 1)
