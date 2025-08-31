@@ -14,14 +14,18 @@ module memory_cycle(
     reg [4:0] RD_M_r;
     reg [31:0] PCPlus4M_r, ALU_ResultM_r, ReadDataM_r;
 
-    Data_Memory dmem (
-        .clk(clk),
-        .rst(rst),
-        .WE(MemWriteM),
-        .WD(WriteDataM),
-        .A(ALU_ResultM),
-        .RD(ReadDataM)
-    );
+   SPI_MM_Interface spi_mm (
+    .clk(clk),
+    .rst(rst),
+    .WE(MemWriteM),
+    .Addr(ALU_ResultM),
+    .WD(WriteDataM),
+    .RD(ReadDataM),
+    .ss_pad_o(ss_pad_o),
+    .sclk_pad_o(sclk_pad_o),
+    .mosi_pad_o(mosi_pad_o),
+    .miso_pad_i(miso_pad_i)
+);
 
     always @(posedge clk or negedge rst) begin
         if (!rst) begin
@@ -48,4 +52,5 @@ $display("[MEM] ALU=%h, WriteData=%h, ReadData=%h, WE=%b", ALU_ResultM, WriteDat
     assign PCPlus4W    = PCPlus4M_r;
     assign ALU_ResultW = ALU_ResultM_r;
     assign ReadDataW   = ReadDataM_r;
+
 endmodule
