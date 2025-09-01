@@ -1,4 +1,3 @@
-// Main Control Unit (Complete for RV32I, including AUIPC)
 module control_unit (
     input      [6:0]            op,           // Instruction opcode [6:0]
 
