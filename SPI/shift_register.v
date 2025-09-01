@@ -1,4 +1,3 @@
-// 8-bit Shift Register (Corrected)
 // Handles parallel-to-serial (MOSI) and serial-to-parallel (MISO) conversion.
 module shift_register (
     input           PCLK, PRESETn,
