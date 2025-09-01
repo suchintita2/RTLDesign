@@ -1,4 +1,3 @@
-// APB Slave Interface (Corrected)
 // Handles register access and orchestrates SPI transfers.
 module APB_Slave_Interface(
     input           PCLK, PRESETn,
