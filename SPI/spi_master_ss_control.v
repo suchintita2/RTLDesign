@@ -1,4 +1,3 @@
-// Master Mode Slave Select Controller (Corrected)
 // Manages the SS line and transfer timing when in master mode.
 module spi_master_ss_control(
     input           PCLK, PRESETn,
