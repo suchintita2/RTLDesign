@@ -14,7 +14,6 @@ module APB_Slave_Interface(
     output          PREADY,
     output          load_tx_reg,    // Pulse to load data into shift register
     output  [7:0]   tx_data_out,    // Data to send to shift register
-    // PSLVERR is removed as it was unused and tied to 0
     output  [7:0]   PRDATA
 );
 
