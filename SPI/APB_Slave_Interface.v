@@ -12,9 +12,11 @@ module APB_Slave_Interface(
     output          mstr, cpol, cpha, lsbfe,
     output  [2:0]   sppr, spr,
     output          spi_interrupt_request,
-    output          PREADY, PSLVERR,
+    output          PREADY,
     output          load_tx_reg,    // Pulse to load data into shift register
-    output  [7:0]   tx_data_out     // Data to send to shift register
+    output  [7:0]   tx_data_out,    // Data to send to shift register
+    // PSLVERR is removed as it was unused and tied to 0
+    output  [7:0]   PRDATA
 );
 
     // --- Internal Registers ---
@@ -36,7 +38,6 @@ module APB_Slave_Interface(
     wire wr_enb = PWRITE && (state == ACCESS);
     wire rd_enb = !PWRITE && (state == ACCESS);
     assign PREADY = (state == ACCESS);
-    assign PSLVERR = 1'b0; // Generally for decode errors, not busy status
 
     // --- Control signal assignments from registers ---
     assign mstr  = SPI_CR1[4];
@@ -79,36 +80,45 @@ module APB_Slave_Interface(
         end
     end
 
-    // --- Status flag and transfer control logic ---
+    // --- Status flag and transfer control logic (CORRECTED) ---
     always @(posedge PCLK or negedge PRESETn) begin
         if (!PRESETn) begin
             tx_buffer_empty <= 1'b1;
             rx_buffer_full  <= 1'b0;
         end else begin
-            // Transmit flag logic
-            if (wr_enb && PADDR == 3'b101) tx_buffer_empty <= 1'b0; // Buffer is now full
-            if (load_tx_reg)               tx_buffer_empty <= 1'b1; // Buffer is now empty
+            // Transmit flag logic with priority
+            if (wr_enb && PADDR == 3'b101) begin
+                tx_buffer_empty <= 1'b0; // Buffer is now full
+            end else if (load_tx_reg) begin
+                tx_buffer_empty <= 1'b1; // Buffer is now empty
+            end
 
-            // Receive flag logic
-            if (transfer_complete)         rx_buffer_full <= 1'b1; // Buffer is now full
-            if (rd_enb && PADDR == 3'b101) rx_buffer_full <= 1'b0; // Buffer has been read
+            // Receive flag logic with priority
+            if (transfer_complete) begin
+                rx_buffer_full <= 1'b1; // Buffer is now full
+            end else if (rd_enb && PADDR == 3'b101) begin
+                rx_buffer_full <= 1'b0; // Buffer has been read
+            end
         end
     end
 
     // --- Read data multiplexer ---
     always @(*) begin
+        // Local PRDATA to avoid latches if not all PADDR are specified
+        reg [7:0] prdata_mux; 
         if (rd_enb) begin
             case (PADDR)
-                3'b000: PRDATA = SPI_CR1;
-                3'b001: PRDATA = SPI_CR2;
-                3'b010: PRDATA = SPI_BR;
-                3'b011: PRDATA = SPI_SR;
-                3'b101: PRDATA = SPI_DR;
-                default: PRDATA = 8'h00;
+                3'b000: prdata_mux = SPI_CR1;
+                3'b001: prdata_mux = SPI_CR2;
+                3'b010: prdata_mux = SPI_BR;
+                3'b011: prdata_mux = SPI_SR;
+                3'b101: prdata_mux = SPI_DR;
+                default: prdata_mux = 8'h00;
             endcase
         end else begin
-            PRDATA = 8'h00;
+            prdata_mux = 8'h00;
         end
+        PRDATA = prdata_mux;
     end
     
     // --- Interrupt request logic ---
@@ -124,7 +134,7 @@ module APB_Slave_Interface(
         case (state)
             IDLE:   next_state = PSEL ? SETUP : IDLE;
             SETUP:  next_state = PENABLE ? ACCESS : SETUP;
-            ACCESS: next_state = PSEL ? SETUP : IDLE;
+            ACCESS: next_state = (PSEL && PENABLE) ? ACCESS : IDLE; // Corrected APB transition
             default: next_state = IDLE;
         endcase
     end
