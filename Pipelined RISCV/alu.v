@@ -1,4 +1,3 @@
-// ALU (Complete for RV32I)
 module alu (
     input      [31:0]           a, b,            // Operands
     input      [3:0]            alu_control,     // 4-bit control signal
