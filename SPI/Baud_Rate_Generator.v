@@ -1,4 +1,3 @@
-// Baud Rate Generator (Corrected)
 // Generates the SPI clock and robust edge-detection events.
 module Baud_Rate_Generator(
     input           PCLK,
